@@ -1,8 +1,8 @@
-package services;
+package com.english.battle.services;
 
+import com.english.battle.repository.TypeOfQuestionRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import repository.TypeOfQuestionRepository;
 
 @Service
 @RequiredArgsConstructor

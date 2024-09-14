@@ -1,6 +1,6 @@
-package repository;
+package com.english.battle.repository;
 
-import models.TypeOfQuestion;
+import com.english.battle.models.TypeOfQuestion;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

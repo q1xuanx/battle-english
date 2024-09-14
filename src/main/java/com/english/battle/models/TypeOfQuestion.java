@@ -1,4 +1,4 @@
-package models;
+package com.english.battle.models;
 
 
 import jakarta.persistence.*;
