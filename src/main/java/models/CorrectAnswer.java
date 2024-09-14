@@ -9,13 +9,14 @@ import lombok.Setter;
 @Getter
 @Setter
 @Entity
+@Table(name = "correct_answer")
 public class CorrectAnswer {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private String IdCorrectAnswer;
     @NotNull
     private String CorrectAnswer;
-    @OneToOne(fetch = FetchType.LAZY, mappedBy = "correct_answer")
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="id_question", referencedColumnName = "IdQuestion")
     private Questions Question;
 }

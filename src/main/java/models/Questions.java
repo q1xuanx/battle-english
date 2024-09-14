@@ -2,6 +2,7 @@ package models;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
+import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -9,6 +10,8 @@ import lombok.Setter;
 @Getter
 @Setter
 @Entity
+@Data
+@Table(name="questions")
 public class Questions {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -24,7 +27,7 @@ public class Questions {
     @NotNull
     private String AnswerD;
     private Boolean IsHide = false;
-    @OneToOne(fetch = FetchType.LAZY, mappedBy = "question")
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_correct", referencedColumnName = "IdCorrectAnswer")
     private CorrectAnswer AnswerCorrect;
     @ManyToOne(fetch = FetchType.LAZY)
