@@ -16,7 +16,5 @@ public class CorrectAnswer {
     private String IdCorrectAnswer;
     @NotNull
     private String CorrectAnswer;
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name="id_question", referencedColumnName = "IdQuestion")
-    private Questions Question;
+    private boolean IsHide = false;
 }

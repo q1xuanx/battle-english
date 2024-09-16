@@ -20,6 +20,5 @@ public class TypeOfQuestion {
     private String IdTypeOfQuestion;
     @NotNull
     private String NameType;
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "TypeOfQuestion")
-    private List<Questions> Question;
+    private boolean IsHide = false;
 }
