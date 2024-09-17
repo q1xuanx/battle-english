@@ -21,10 +21,14 @@ public class QuestionService {
     private final QuestionRepository questionRepository;
     private final CorrectAnswerService correctAnswerService;
     private final Logger logger = LoggerFactory.getLogger(QuestionService.class);
-
     public ApiResponse<Object> CreateQuestion(List<Questions> questions) {
         try{
             for(Questions quest : questions) {
+                if (quest.getDetailQuestion().isEmpty()){
+                    return new ApiResponse<>(400, null, "Details question missed");
+                }else if (quest.getAnswerA().isEmpty() || quest.getAnswerB().isEmpty() || quest.getAnswerC().isEmpty() || quest.getAnswerD().isEmpty()){
+                    return new ApiResponse<>(400, null, "Answer does not exist");
+                }
                 List<String> list = new ArrayList<>();
                 list.add(quest.getAnswerA());
                 list.add(quest.getAnswerB());
