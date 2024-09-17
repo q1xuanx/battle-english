@@ -24,10 +24,9 @@ public class QuestionService {
     public ApiResponse<Object> CreateQuestion(List<Questions> questions) {
         try{
             for(Questions quest : questions) {
-                if (quest.getDetailQuestion().isEmpty()){
-                    return new ApiResponse<>(400, null, "Details question missed");
-                }else if (quest.getAnswerA().isEmpty() || quest.getAnswerB().isEmpty() || quest.getAnswerC().isEmpty() || quest.getAnswerD().isEmpty()){
-                    return new ApiResponse<>(400, null, "Answer does not exist");
+                String validationMessage = ValidateQuestionInput(quest);
+                if (!validationMessage.equals("Good")){
+                    return new ApiResponse<>(400, null, validationMessage);
                 }
                 List<String> list = new ArrayList<>();
                 list.add(quest.getAnswerA());
@@ -36,8 +35,8 @@ public class QuestionService {
                 list.add(quest.getAnswerD());
                 Optional<String> findCorrectAnswer = list.stream().filter(s -> s.contains("||CorrectAnswer")).findFirst();
                 if (findCorrectAnswer.isPresent()) {
-                    String correctAnswer = findCorrectAnswer.get().split("\\|\\|")[0];
-                    CorrectAnswer isAdded = correctAnswerService.CreateNewCorrectAnswer(correctAnswer);
+                    String rmvSuffix = RemoveCorrectAnswerSuffix(quest, findCorrectAnswer.get());
+                    CorrectAnswer isAdded = correctAnswerService.CreateNewCorrectAnswer(rmvSuffix);
                     quest.setAnswerCorrect(isAdded);
                 }else {
                     return new ApiResponse<>(404, "Fail to create", "Correct answer doesn't appear in question");
@@ -48,5 +47,26 @@ public class QuestionService {
             logger.error("Error while creating new question {}", e.getMessage());
             return new ApiResponse<>(400, "Fail to create", e.getMessage());
         }
+    }
+    public String ValidateQuestionInput(Questions quest){
+        if (quest.getDetailQuestion().isEmpty()){
+            return "Details question missed";
+        }else if (quest.getAnswerA().isEmpty() || quest.getAnswerB().isEmpty() || quest.getAnswerC().isEmpty() || quest.getAnswerD().isEmpty()){
+            return "Answer does not exist";
+        }
+        return "Good";
+    }
+    public String RemoveCorrectAnswerSuffix(Questions quest, String findCorrectAnswer) {
+        String rmvSuffix = findCorrectAnswer.split("\\|\\|")[0];
+        if (quest.getAnswerA().equals(findCorrectAnswer)) {
+            quest.setAnswerA(rmvSuffix);
+        }else if (quest.getAnswerB().equals(findCorrectAnswer)) {
+            quest.setAnswerB(rmvSuffix);
+        }else if (quest.getAnswerC().equals(findCorrectAnswer)) {
+            quest.setAnswerC(rmvSuffix);
+        }else if (quest.getAnswerD().equals(findCorrectAnswer)) {
+            quest.setAnswerD(rmvSuffix);
+        }
+        return rmvSuffix;
     }
 }

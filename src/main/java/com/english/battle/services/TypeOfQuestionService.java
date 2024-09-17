@@ -56,7 +56,7 @@ public class TypeOfQuestionService {
             return new ApiResponse<>(400, null , e.getMessage());
         }
     }
-    public ApiResponse<Object> DeleteCorrectAnswer(String idTye){
+    public ApiResponse<Object> DeleteTypeQuestion(String idTye){
         try {
             Optional<TypeOfQuestion> type = typeOfQuestionRepository.findById(idTye);
             if (type.isPresent()) {
@@ -68,6 +68,14 @@ public class TypeOfQuestionService {
             return new ApiResponse<>(404, null, "Not found type of question with id: " + idTye);
          } catch (Exception e) {
             logger.error("Error delete type of question with id: {} | Error name: {}", idTye, e.getMessage());
+            return new ApiResponse<>(400, null , e.getMessage());
+        }
+    }
+    public ApiResponse<Object> GetAllType(){
+        try{
+            return new ApiResponse<>(200, typeOfQuestionRepository.findAll(), "Get success");
+        }catch(Exception e){
+            logger.error("Error while collect data | Error message: {}", e.getMessage());
             return new ApiResponse<>(400, null , e.getMessage());
         }
     }

@@ -1,5 +1,6 @@
 package com.english.battle.services;
 
+import com.english.battle.dto.response.ApiResponse;
 import com.english.battle.models.CorrectAnswer;
 import com.english.battle.repository.CorrectAnswerRepository;
 import jakarta.persistence.EntityNotFoundException;
@@ -30,29 +31,28 @@ public class CorrectAnswerService {
             throw new RuntimeException(e.getCause());
         }
     }
-    public CorrectAnswer GetCorrectAnswer(String idCorrectAnswer){
+    public ApiResponse<CorrectAnswer> GetCorrectAnswer(String idCorrectAnswer){
         try {
             Optional<CorrectAnswer> correct = correctAnswerRepository.findById(idCorrectAnswer);
-            if (correct.isPresent()) return correct.get();
-            throw new EntityNotFoundException("Not found correct answer with id: " + idCorrectAnswer);
+            return correct.map(correctAnswer -> new ApiResponse<>(200, correctAnswer, "Get data success")).orElseGet(() -> new ApiResponse<>(404, null, "Not found correct answer with id: " + idCorrectAnswer));
         } catch (Exception e) {
             logger.error("Error find correct answer with id: {} | Error name: {}", idCorrectAnswer, e.getMessage());
-            throw new RuntimeException("Error while find correct answer {}", e.getCause());
+            return new ApiResponse<>(400, null, "Error while find correct answer " + e.getCause());
         }
     }
-    public CorrectAnswer UpdateCorrectAnswer(String idCorrect, String updatedAnswer){
+    public ApiResponse<CorrectAnswer> UpdateCorrectAnswer(String idCorrect, String updatedAnswer){
         try {
             Optional<CorrectAnswer> correct = correctAnswerRepository.findById(idCorrect);
             if (correct.isPresent()) {
                 CorrectAnswer correctAnswer = correct.get();
                 correctAnswer.setCorrectAnswer(updatedAnswer);
                 correctAnswerRepository.save(correctAnswer);
-                return correctAnswer;
+                return new ApiResponse<>(200, correctAnswer, "Update data success");
             }
-            throw new EntityNotFoundException("Correct answer not found with id: " + idCorrect);
+            return new ApiResponse<>(404, null, "Not found correct answer with id: " + idCorrect);
         }catch (Exception e) {
             logger.error("Error update correct answer with id: {} | Error name: {}", idCorrect, e.getMessage());
-            throw new RuntimeException("Fail to update ", e.getCause());
+            return new ApiResponse<>(400, null, "Error while find correct answer " + e.getCause());
         }
     }
     public boolean DeleteCorrectAnswer(String idCorrectAnswer){
