@@ -10,10 +10,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import com.english.battle.repository.QuestionRepository;
 
-import java.util.ArrayList;
-import java.util.InputMismatchException;
-import java.util.List;
-import java.util.Optional;
+import java.security.SecureRandom;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -68,5 +66,17 @@ public class QuestionService {
             quest.setAnswerD(rmvSuffix);
         }
         return rmvSuffix;
+    }
+    public ApiResponse<Object> MakeListQuest(int sizeOfList){
+        List<Questions> getList = questionRepository.findAll();
+        if (getList.size() < sizeOfList){
+            return new ApiResponse<>(400, null, "Size of list is too big " + sizeOfList);
+        }
+        List<Questions> copyOfList = new ArrayList<>();
+        SecureRandom rnd = new SecureRandom();
+        for(int i = 0; i < sizeOfList; i++){
+            copyOfList.add(getList.remove(rnd.nextInt(getList.size())));
+        }
+        return new ApiResponse<>(200, getList, "Make list quest success");
     }
 }
