@@ -34,10 +34,10 @@ public class CorrectAnswerService {
     public ApiResponse<CorrectAnswer> GetCorrectAnswer(String idCorrectAnswer){
         try {
             Optional<CorrectAnswer> correct = correctAnswerRepository.findById(idCorrectAnswer);
-            return correct.map(correctAnswer -> new ApiResponse<>(200, correctAnswer, "Get data success")).orElseGet(() -> new ApiResponse<>(404, null, "Not found correct answer with id: " + idCorrectAnswer));
+            return correct.map(correctAnswer -> new ApiResponse<>(200, true, "Get data success", correctAnswer)).orElseGet(() -> new ApiResponse<>(404, false, "Not found correct answer with id: " + idCorrectAnswer, null));
         } catch (Exception e) {
             logger.error("Error find correct answer with id: {} | Error name: {}", idCorrectAnswer, e.getMessage());
-            return new ApiResponse<>(400, null, "Error while find correct answer " + e.getCause());
+            return new ApiResponse<>(400, false, "Error while find correct answer " + e.getCause(), null);
         }
     }
     public ApiResponse<CorrectAnswer> UpdateCorrectAnswer(String idCorrect, String updatedAnswer){
@@ -47,12 +47,12 @@ public class CorrectAnswerService {
                 CorrectAnswer correctAnswer = correct.get();
                 correctAnswer.setCorrectAnswer(updatedAnswer);
                 correctAnswerRepository.save(correctAnswer);
-                return new ApiResponse<>(200, correctAnswer, "Update data success");
+                return new ApiResponse<>(200, true, "Update data success", correctAnswer);
             }
-            return new ApiResponse<>(404, null, "Not found correct answer with id: " + idCorrect);
+            return new ApiResponse<>(404, false , "Not found correct answer with id: " + idCorrect, null);
         }catch (Exception e) {
             logger.error("Error update correct answer with id: {} | Error name: {}", idCorrect, e.getMessage());
-            return new ApiResponse<>(400, null, "Error while find correct answer " + e.getCause());
+            return new ApiResponse<>(400, false, "Error while find correct answer " + e.getCause(), null);
         }
     }
     public boolean DeleteCorrectAnswer(String idCorrectAnswer){

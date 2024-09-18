@@ -17,11 +17,11 @@ public class CorrectAnswerController {
     @PutMapping("/update-answer/{idCorrectAnswer}")
     public ResponseEntity<Object> UpdateAnswer(@PathVariable("idCorrectAnswer") String idCorrect, @RequestBody String updatedAnswer){
         ApiResponse<CorrectAnswer> response = correctAnswerService.UpdateCorrectAnswer(idCorrect, updatedAnswer);
-        return ResponseEntity.status(response.getStatus()).body(response);
+        return ResponseEntity.status(response.getCode()).body(response);
     }
     @GetMapping("/get-answer/{idCorrectAnswer}")
     public ResponseEntity<Object> GetAnswer(@PathVariable("idCorrectAnswer") String idCorrect){
         ApiResponse<CorrectAnswer> response =  correctAnswerService.GetCorrectAnswer(idCorrect);
-        return ResponseEntity.status(response.getStatus()).body(response);
+        return ResponseEntity.status(response.getCode()).body(response);
     }
 }

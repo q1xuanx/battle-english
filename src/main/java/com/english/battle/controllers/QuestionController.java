@@ -16,11 +16,11 @@ public class QuestionController {
     @PostMapping("/add-new")
     public ResponseEntity<Object> AddQuestion (@RequestBody List<Questions> questList){
         ApiResponse<Object> listAdd = questionService.CreateQuestion(questList);
-        return ResponseEntity.status(listAdd.getStatus()).body(listAdd);
+        return ResponseEntity.status(listAdd.getCode()).body(listAdd);
     }
     @GetMapping("/make-test/{sizeOfList}")
     public ResponseEntity<Object> MakeTask(@PathVariable("sizeOfList") int sizeOfList){
         ApiResponse<Object> list = questionService.MakeListQuest(sizeOfList);
-        return ResponseEntity.status(list.getStatus()).body(list);
+        return ResponseEntity.status(list.getCode()).body(list);
     }
 }

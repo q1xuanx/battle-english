@@ -24,7 +24,7 @@ public class QuestionService {
             for(Questions quest : questions) {
                 String validationMessage = ValidateQuestionInput(quest);
                 if (!validationMessage.equals("Good")){
-                    return new ApiResponse<>(400, null, validationMessage);
+                    return new ApiResponse<>(400, false, validationMessage, null);
                 }
                 List<String> list = new ArrayList<>();
                 list.add(quest.getAnswerA());
@@ -37,13 +37,13 @@ public class QuestionService {
                     CorrectAnswer isAdded = correctAnswerService.CreateNewCorrectAnswer(rmvSuffix);
                     quest.setAnswerCorrect(isAdded);
                 }else {
-                    return new ApiResponse<>(404, "Fail to create", "Correct answer doesn't appear in question");
+                    return new ApiResponse<>(404, false, "Correct answer doesn't appear in question", null);
                 }
             }
-            return new ApiResponse<>(200, questionRepository.saveAll(questions), "Add list question success");
+            return new ApiResponse<>(200, true, "Add list question success", questionRepository.saveAll(questions));
        } catch (Exception e) {
             logger.error("Error while creating new question {}", e.getMessage());
-            return new ApiResponse<>(400, "Fail to create", e.getMessage());
+            return new ApiResponse<>(400, false, e.getMessage(), null);
         }
     }
     public String ValidateQuestionInput(Questions quest){
@@ -70,13 +70,13 @@ public class QuestionService {
     public ApiResponse<Object> MakeListQuest(int sizeOfList){
         List<Questions> getList = questionRepository.findAll();
         if (getList.size() < sizeOfList){
-            return new ApiResponse<>(400, null, "Size of list is too big " + sizeOfList);
+            return new ApiResponse<>(400, false, "Size of list is too big " + sizeOfList, null);
         }
         List<Questions> copyOfList = new ArrayList<>();
         SecureRandom rnd = new SecureRandom();
         for(int i = 0; i < sizeOfList; i++){
             copyOfList.add(getList.remove(rnd.nextInt(getList.size())));
         }
-        return new ApiResponse<>(200, getList, "Make list quest success");
+        return new ApiResponse<>(200, true , "Make list quest success", copyOfList);
     }
 }

@@ -21,24 +21,24 @@ public class TypeOfQuestionService {
     public ApiResponse<Object> CreateNewTypeQuestion(String typeName){
         try{
             if (typeName.isEmpty() || typeName.isBlank()){
-                return new ApiResponse<>(404, null, "Can't find type name");
+                return new ApiResponse<>(404, false, "Can't find type name", null);
             }
             TypeOfQuestion typeOf = new TypeOfQuestion();
             typeOf.setNameType(typeName);
             typeOfQuestionRepository.save(typeOf);
-            return new ApiResponse<>(200, typeOf, "Create success");
+            return new ApiResponse<>(200, true, "Create success", typeOf);
         }catch (Exception e) {
             logger.error("Error while save new entity | Error name: {}", e.getMessage());
-            return new ApiResponse<>(400, null , e.getMessage());
+            return new ApiResponse<>(400, false , e.getMessage(), null);
         }
     }
     public ApiResponse<Object> GetTypeOfQuestion(String idType){
         try {
             Optional<TypeOfQuestion> type = typeOfQuestionRepository.findById(idType);
-            return type.<ApiResponse<Object>>map(typeOfQuestion -> new ApiResponse<>(200, typeOfQuestion, "Create success")).orElseGet(() -> new ApiResponse<>(404, null, "Not found type of question with id: " + idType));
+            return type.<ApiResponse<Object>>map(typeOfQuestion -> new ApiResponse<>(200, true, "Create success",typeOfQuestion)).orElseGet(() -> new ApiResponse<>(404, false, "Not found type of question with id: " + idType,null));
         } catch (Exception e) {
             logger.error("Error find type of question with id: {} | Error name: {}", idType, e.getMessage());
-            return new ApiResponse<>(400, null , e.getMessage());
+            return new ApiResponse<>(400, false , e.getMessage(), null);
         }
     }
     public ApiResponse<Object> UpdateTypeQuestion(String idType, String updateNameType){
@@ -48,12 +48,12 @@ public class TypeOfQuestionService {
                 TypeOfQuestion typeQuestion = type.get();
                 typeQuestion.setNameType(updateNameType);
                 typeOfQuestionRepository.save(typeQuestion);
-                return new ApiResponse<>(200, typeQuestion, "Update success");
+                return new ApiResponse<>(200,true , "Update success",typeQuestion);
             }
-            return new ApiResponse<>(404, null, "Not found type of question with id: " + idType);
+            return new ApiResponse<>(404, false, "Not found type of question with id: " + idType,null);
         }catch (Exception e) {
             logger.error("Error update type question with id: {} | Error name: {}", idType, e.getMessage());
-            return new ApiResponse<>(400, null , e.getMessage());
+            return new ApiResponse<>(400, false , e.getMessage(),null);
         }
     }
     public ApiResponse<Object> DeleteTypeQuestion(String idTye){
@@ -63,20 +63,20 @@ public class TypeOfQuestionService {
                 TypeOfQuestion typeOfQuestion = type.get();
                 typeOfQuestion.setIsHide(true);
                 typeOfQuestionRepository.save(typeOfQuestion);
-                return new ApiResponse<>(200, null, "Delete success");
+                return new ApiResponse<>(200, true, "Delete success",null);
             }
-            return new ApiResponse<>(404, null, "Not found type of question with id: " + idTye);
+            return new ApiResponse<>(404, false, "Not found type of question with id: " + idTye, null);
          } catch (Exception e) {
             logger.error("Error delete type of question with id: {} | Error name: {}", idTye, e.getMessage());
-            return new ApiResponse<>(400, null , e.getMessage());
+            return new ApiResponse<>(400, false , e.getMessage(),null);
         }
     }
     public ApiResponse<Object> GetAllType(){
         try{
-            return new ApiResponse<>(200, typeOfQuestionRepository.findAll(), "Get success");
+            return new ApiResponse<>(200, true , "Get success",typeOfQuestionRepository.findAll());
         }catch(Exception e){
             logger.error("Error while collect data | Error message: {}", e.getMessage());
-            return new ApiResponse<>(400, null , e.getMessage());
+            return new ApiResponse<>(400, false , e.getMessage(), null);
         }
     }
 }

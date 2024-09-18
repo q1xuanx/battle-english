@@ -17,21 +17,21 @@ public class TypeOfQuestionController {
     @GetMapping("/get-type/{idType}")
     public ResponseEntity<Object> GetTypeOfQuestion(@PathVariable("idType") String idType) {
         ApiResponse<Object> response = typeOfQuestionService.GetTypeOfQuestion(idType);
-        return ResponseEntity.status(response.getStatus()).body(response);
+        return ResponseEntity.status(response.getCode()).body(response);
     }
     @GetMapping("/get-all")
     public ResponseEntity<Object> GetAllTypeOfQuestion() {
         ApiResponse<Object> response = typeOfQuestionService.GetAllType();
-        return ResponseEntity.status(response.getStatus()).body(response);
+        return ResponseEntity.status(response.getCode()).body(response);
     }
     @PutMapping("/update-type/{idType}")
     public ResponseEntity<Object> UpdateType(@PathVariable("idType") String idType, @RequestBody String updatedType){
         ApiResponse<Object> response = typeOfQuestionService.UpdateTypeQuestion(idType, updatedType);
-        return ResponseEntity.status(response.getStatus()).body(response);
+        return ResponseEntity.status(response.getCode()).body(response);
     }
     @PostMapping("/create-type")
     public ResponseEntity<Object> CreateType(@RequestBody String nameType){
         ApiResponse<Object> response = typeOfQuestionService.CreateNewTypeQuestion(nameType);
-        return ResponseEntity.status(response.getStatus()).body(response);
+        return ResponseEntity.status(response.getCode()).body(response);
     }
 }
