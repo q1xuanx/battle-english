@@ -67,8 +67,8 @@ public class QuestionService {
         }
         return rmvSuffix;
     }
-    public ApiResponse<Object> MakeListQuest(int sizeOfList){
-        List<Questions> getList = questionRepository.findAll();
+    public ApiResponse<Object> MakeListQuest(int sizeOfList, String nameType){
+        List<Questions> getList = questionRepository.findAll().stream().filter(s-> s.getTypeOfQuestion().getNameType().equals(nameType)).toList();
         if (getList.size() < sizeOfList){
             return new ApiResponse<>(400, false, "Size of list is too big " + sizeOfList, null);
         }
