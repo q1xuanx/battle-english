@@ -4,7 +4,9 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.time.LocalDateTime;
 import java.util.Date;
+import java.util.List;
 
 @Getter
 @Setter
@@ -17,6 +19,8 @@ public class DetailsRoom {
     private Room idRoom;
     @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.PERSIST)
     private User userSubmit;
-    private Date timeSubmit;
+    @ElementCollection
+    private List<QuestionAfterCheck> questionAfterCheckList;
+    private LocalDateTime timeSubmit;
     private int soccerOfUser;
 }

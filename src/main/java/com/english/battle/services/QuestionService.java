@@ -2,6 +2,7 @@ package com.english.battle.services;
 
 import com.english.battle.dto.response.ApiResponse;
 import com.english.battle.models.CorrectAnswer;
+import com.english.battle.models.QuestionAfterCheck;
 import com.english.battle.models.Questions;
 import lombok.RequiredArgsConstructor;
 import org.aspectj.weaver.patterns.TypePatternQuestions;
@@ -26,11 +27,7 @@ public class QuestionService {
                 if (!validationMessage.equals("Good")){
                     return new ApiResponse<>(400, false, validationMessage, null);
                 }
-                List<String> list = new ArrayList<>();
-                list.add(quest.getAnswerA());
-                list.add(quest.getAnswerB());
-                list.add(quest.getAnswerC());
-                list.add(quest.getAnswerD());
+                List<String> list = AddAnswerToList(quest);
                 Optional<String> findCorrectAnswer = list.stream().filter(s -> s.contains("||CorrectAnswer")).findFirst();
                 if (findCorrectAnswer.isPresent()) {
                     String rmvSuffix = RemoveCorrectAnswerSuffix(quest, findCorrectAnswer.get());
@@ -78,5 +75,39 @@ public class QuestionService {
             copyOfList.add(getList.remove(rnd.nextInt(getList.size())));
         }
         return new ApiResponse<>(200, true , "Make list quest success", copyOfList);
+    }
+    public List<String> AddAnswerToList(Questions quest){
+        List<String> list = new ArrayList<>();
+        list.add(quest.getAnswerA());
+        list.add(quest.getAnswerB());
+        list.add(quest.getAnswerC());
+        list.add(quest.getAnswerD());
+        return list;
+    }
+    public List<QuestionAfterCheck> CheckCorrectQuestionOfUser(List<Questions> listQuestion){
+        List<QuestionAfterCheck> checkList = new ArrayList<>();
+        for (Questions question : listQuestion) {
+            List<String> list = AddAnswerToList(question);
+            String findCorrectAnswer = list.stream().filter(s -> s.contains("||CorrectAnswer")).findFirst().get().split("\\|\\|")[0];
+            QuestionAfterCheck questCheck = new QuestionAfterCheck();
+            questCheck.setQuestion(question);
+            if (findCorrectAnswer == null){
+                questCheck.setPointGet(0);
+                questCheck.setAnswerUserChose("Not chose question");
+            }else {
+                questCheck.setAnswerUserChose(findCorrectAnswer);
+                int pointGet = findCorrectAnswer(question, findCorrectAnswer) ? 1 : 0;
+                questCheck.setPointGet(pointGet);
+            }
+            checkList.add(questCheck);
+        }
+        return checkList;
+    }
+    public boolean findCorrectAnswer(Questions question, String answer){
+        if (question.getAnswerCorrect().getCorrectAnswer().equals(answer)){
+            return true;
+        }else {
+            return false;
+        }
     }
 }
