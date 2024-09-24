@@ -1,6 +1,7 @@
 package com.english.battle.controllers;
 
 
+import com.english.battle.dto.request.UpdateAnswerRequest;
 import com.english.battle.dto.response.ApiResponse;
 import com.english.battle.models.CorrectAnswer;
 import com.english.battle.services.CorrectAnswerService;
@@ -15,8 +16,8 @@ import org.springframework.web.bind.annotation.*;
 public class CorrectAnswerController {
     private final CorrectAnswerService correctAnswerService;
     @PutMapping("/update-answer/{idCorrectAnswer}")
-    public ResponseEntity<Object> UpdateAnswer(@PathVariable("idCorrectAnswer") String idCorrect, @RequestBody String updatedAnswer){
-        ApiResponse<CorrectAnswer> response = correctAnswerService.UpdateCorrectAnswer(idCorrect, updatedAnswer);
+    public ResponseEntity<Object> UpdateAnswer(@PathVariable("idCorrectAnswer") String idCorrect, @RequestBody UpdateAnswerRequest updatedAnswer){
+        ApiResponse<CorrectAnswer> response = correctAnswerService.UpdateCorrectAnswer(idCorrect, updatedAnswer.getAnswerUpdate());
         return ResponseEntity.status(response.getCode()).body(response);
     }
     @GetMapping("/get-answer/{idCorrectAnswer}")

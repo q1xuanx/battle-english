@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.aspectj.weaver.patterns.TypePatternQuestions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Service;
 import com.english.battle.repository.QuestionRepository;
 
@@ -65,16 +66,30 @@ public class QuestionService {
         return rmvSuffix;
     }
     public ApiResponse<Object> MakeListQuest(int sizeOfList, String nameType){
-        List<Questions> getList = questionRepository.findAll().stream().filter(s-> s.getTypeOfQuestion().getNameType().equals(nameType)).toList();
+        try{
+            List<Questions> listQuest = MixQuestion(nameType, sizeOfList);
+            if (listQuest.size() == 0){
+                return new ApiResponse<>(400, false, "Size of list is too big " + sizeOfList, null);
+            }
+            return new ApiResponse<>(200, true , "Make list quest success", listQuest);
+        }catch (Exception e){
+            logger.error(e.getMessage());
+            return new ApiResponse<>(400, false, e.getMessage(), null);
+        }
+    }
+    public List<Questions> MixQuestion(String nameType, int sizeOfList){
+        List<Questions> getList = questionRepository.findAll();
+        getList.stream().filter(s -> s.getTypeOfQuestion().getNameType().equals(nameType)).toList();
         if (getList.size() < sizeOfList){
-            return new ApiResponse<>(400, false, "Size of list is too big " + sizeOfList, null);
+            List<Questions> listQuest = new ArrayList<>();
+            return listQuest;
         }
         List<Questions> copyOfList = new ArrayList<>();
         SecureRandom rnd = new SecureRandom();
         for(int i = 0; i < sizeOfList; i++){
             copyOfList.add(getList.remove(rnd.nextInt(getList.size())));
         }
-        return new ApiResponse<>(200, true , "Make list quest success", copyOfList);
+        return copyOfList;
     }
     public List<String> AddAnswerToList(Questions quest){
         List<String> list = new ArrayList<>();
@@ -88,25 +103,26 @@ public class QuestionService {
         List<QuestionAfterCheck> checkList = new ArrayList<>();
         for (Questions question : listQuestion) {
             List<String> list = AddAnswerToList(question);
-            String findCorrectAnswer = list.stream().filter(s -> s.contains("||CorrectAnswer")).findFirst().get().split("\\|\\|")[0];
+            Optional<String> findCorrectAnswer = list.stream().filter(s -> s.contains("||CorrectAnswer")).findFirst();
             QuestionAfterCheck questCheck = new QuestionAfterCheck();
             questCheck.setQuestion(question);
-            if (findCorrectAnswer == null){
+            if (findCorrectAnswer.isEmpty()){
                 questCheck.setPointGet(0);
                 questCheck.setAnswerUserChose("Not chose question");
             }else {
-                questCheck.setAnswerUserChose(findCorrectAnswer);
-                int pointGet = findCorrectAnswer(question, findCorrectAnswer) ? 1 : 0;
+                String correctAnswer = findCorrectAnswer.get().split("\\|\\|")[0];
+                questCheck.setAnswerUserChose(correctAnswer);
+                int pointGet = findCorrectAnswer(question, correctAnswer) ? 1 : 0;
                 questCheck.setPointGet(pointGet);
             }
             checkList.add(questCheck);
         }
         return checkList;
     }
-    public boolean findCorrectAnswer(Questions question, String answer){
-        if (question.getAnswerCorrect().getCorrectAnswer().equals(answer)){
+    public boolean findCorrectAnswer(Questions question, String answer) {
+        if (question.getAnswerCorrect().getCorrectAnswer().equals(answer)) {
             return true;
-        }else {
+        } else {
             return false;
         }
     }

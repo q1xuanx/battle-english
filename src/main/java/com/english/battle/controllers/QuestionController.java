@@ -18,7 +18,7 @@ public class QuestionController {
         ApiResponse<Object> listAdd = questionService.CreateQuestion(questList);
         return ResponseEntity.status(listAdd.getCode()).body(listAdd);
     }
-    @GetMapping("/make-test/")
+    @GetMapping("/make-test")
     public ResponseEntity<Object> MakeTask(@RequestParam ("sizeOfList") int sizeOfList, @RequestParam String nameType){
         ApiResponse<Object> list = questionService.MakeListQuest(sizeOfList, nameType);
         return ResponseEntity.status(list.getCode()).body(list);
