@@ -32,5 +32,10 @@ public class RoomController {
         ApiResponse<Object> response = roomService.CalculateRank(idRoom);
         return ResponseEntity.status(response.getCode()).body(response);
     }
+    @PutMapping("/update-status/{idRoom}")
+    public ResponseEntity<Object> UpdateStatus(@PathVariable String idRoom){
+        ApiResponse<Object> response = roomService.UpdateStatusOfRoom(idRoom);
+        return ResponseEntity.status(response.getCode()).body(response);
+    }
 }
 //Create room -> join room -> submit list question
