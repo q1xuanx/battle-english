@@ -34,7 +34,7 @@ public class UserService {
         user.setDayOfBirth(request.getDayOfBirth());
         user.setFullName(request.getFullName());
 
-        Optional<Roles> role = roleRepository.findById(Long.valueOf(4));
+        Optional<Roles> role = roleRepository.findById(Long.valueOf(1));
         user.setRole(role.get());
 
         return userRepository.save(user);
