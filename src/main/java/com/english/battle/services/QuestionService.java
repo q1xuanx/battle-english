@@ -120,10 +120,6 @@ public class QuestionService {
         return checkList;
     }
     public boolean findCorrectAnswer(Questions question, String answer) {
-        if (question.getAnswerCorrect().getCorrectAnswer().equals(answer)) {
-            return true;
-        } else {
-            return false;
-        }
+        return question.getAnswerCorrect().getCorrectAnswer().equals(answer);
     }
 }
