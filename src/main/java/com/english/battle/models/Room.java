@@ -17,10 +17,10 @@ public class Room {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private String idRoom;
-    @OneToMany(fetch = FetchType.EAGER)
+    @ManyToMany(fetch = FetchType.EAGER)
     private List<User> currentUser;
     private int maxUserInRoom;
     private String statusRoom;
-    @OneToMany(fetch = FetchType.EAGER)
+    @ManyToMany(fetch = FetchType.EAGER)
     private List<Questions> listQuestions;
 }
