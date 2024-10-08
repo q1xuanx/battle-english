@@ -46,7 +46,7 @@ public class RoomService {
                 return new ApiResponse<>(400, false, "Fail when make list question", null);
             }
         }catch (Exception e){
-            logger.error("Error when create new room: " + e.getCause());
+            logger.error("Error when create new room: || message {}",e.getMessage());
             return new ApiResponse<>(400, false, e.getLocalizedMessage(), null);
         }
     }
