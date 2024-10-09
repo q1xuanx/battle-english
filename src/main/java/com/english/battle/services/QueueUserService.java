@@ -11,9 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Queue;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -46,6 +44,20 @@ public class QueueUserService {
         }catch (Exception e){
             log.error("Error when add new user: || error message {}", e.getMessage());
             return new ApiResponse<>(400, false, "Error when add user", null);
+        }
+    }
+    public ApiResponse<Object> leaveQueue(Long idUser) {
+        try{
+            List<QueueUser> userInQueue = queueUserRepository.findAll();
+            Optional<QueueUser> user = userInQueue.stream().filter(s -> Objects.equals(s.getUser().getId(), idUser)).findFirst();
+            if (user.isPresent()){
+                queueUserRepository.delete(user.get());
+                return new ApiResponse<>(200, true, "User left in queue", null);
+            }
+            return new ApiResponse<>(404, false, "Not found user", null);
+        } catch (Exception e){
+            log.error("Error when leave user: || error message {}", e.getMessage());
+            return new ApiResponse<>(400, false, e.getMessage(), null);
         }
     }
     public List<UserCreateRoomRequest> createListToMakeRoom (Long idUser1, Long idUser2) {
