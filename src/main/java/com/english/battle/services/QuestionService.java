@@ -5,10 +5,8 @@ import com.english.battle.models.CorrectAnswer;
 import com.english.battle.models.QuestionAfterCheck;
 import com.english.battle.models.Questions;
 import lombok.RequiredArgsConstructor;
-import org.aspectj.weaver.patterns.TypePatternQuestions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Service;
 import com.english.battle.repository.QuestionRepository;
 
