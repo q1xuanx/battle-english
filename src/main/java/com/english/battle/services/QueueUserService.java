@@ -20,7 +20,7 @@ public class QueueUserService {
     private final UserService userService;
     private final RoomService roomService;
     private final Logger log = LoggerFactory.getLogger(QueueUserService.class);
-    //Search user if queue.length > 1 then create new Room with current user and user int queue.
+    //Search user if queue.length > 1 then create new Room with current user and user in queue.
     public ApiResponse<Object> searchUser(Long idUser, String typeOfRoom) {
         try {
             User user = userService.getUserById(idUser);
