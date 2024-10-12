@@ -7,6 +7,7 @@ import com.english.battle.repository.RoomRepository;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.cglib.core.Local;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -36,6 +37,10 @@ public class RoomService {
             room.setMaxUserInRoom(users.size());
             room.setStatusRoom("Progress");
             room.setCurrentUser(users);
+            LocalDateTime now = LocalDateTime.now();
+            LocalDateTime end = LocalDateTime.now().plusMinutes(30);
+            room.setStartTime(now);
+            room.setEndTime(end);
             List<Questions> mixQuest = questions.MixQuestion(typeOfQuestion, 5);
             System.out.println(mixQuest.size());
             if (!mixQuest.isEmpty()){
@@ -52,25 +57,30 @@ public class RoomService {
     }
     public ApiResponse<Object> CalculatePoint(List<Questions> questions, Long idUser, String idRoom) {
         try {
-            DetailsRoom details = new DetailsRoom();
+            LocalDateTime now = LocalDateTime.now();
             boolean isSubmit = detailsRoomService.IsSubmit(idUser, idRoom);
+            Optional<Room> outOfDate = roomRepository.findById(idRoom);
+            if (outOfDate.isEmpty()){
+                return new ApiResponse<>(404, false, "Not found room with id: " + idRoom, idRoom);
+            }
+            LocalDateTime getTime = outOfDate.get().getEndTime();
+            if (now.isAfter(getTime)) {
+                return new ApiResponse<>(400, false, "Out of time to submit, the contest end in " + getTime, now);
+            }
             if (isSubmit){
                 return new ApiResponse<>(400, false, "You have submitted yet", null);
             }
+            DetailsRoom details = new DetailsRoom();
             List<QuestionAfterCheck> listCheckQuest = this.questions.CheckCorrectQuestionOfUser(questions);
             int pointAfterSubmit = listCheckQuest.stream().mapToInt(QuestionAfterCheck::getPointGet).sum();
             LocalDateTime submit = LocalDateTime.now();
-            Optional<Room> findRoom = roomRepository.findById(idRoom);
-            if (findRoom.isEmpty()){
-                return new ApiResponse<>(404, false, "Not found room with id: " + idRoom, null);
-            }
-            details.setIdRoom(findRoom.get());
+            details.setIdRoom(outOfDate.get());
             details.setTimeSubmit(submit);
             details.setUserSubmit(users.getUserById(idUser));
             details.setQuestionAfterCheckList(listCheckQuest);
             details.setSoccerOfUser(pointAfterSubmit);
             String isAdded = detailsRoomService.AddNewDetails(details);
-            if (isAdded.equals("Ok Good")){
+            if ("Ok Good".equals(isAdded)){
                 return new ApiResponse<>(200, true, "Submit success and get result", details);
             }
             return new ApiResponse<>(400, false, "Submit false please try again", "Error message: " + isAdded);
