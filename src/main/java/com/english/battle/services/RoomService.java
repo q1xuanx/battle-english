@@ -102,8 +102,12 @@ public class RoomService {
             return new ApiResponse<>(400, false, e.getMessage(), null);
         }
     }
+    public ApiResponse<Object> GetListRoomUser(Long idUser){
+        List<Room> list = roomRepository.findAll().stream().filter(s -> s.getCurrentUser().stream().anyMatch(ss -> ss.getId().equals(idUser))).toList();
+        return new ApiResponse<>(200, true, "list room of users", list);
+    }
     public ApiResponse<Object> CalculateRank (String idRoom){
-        try{
+        try {
             Optional<Room> room = roomRepository.findById(idRoom);
             if (room.isPresent()){
                 List<DetailsRoom> listDetail = detailsRoomService.GetAllRankOfUser(room.get());

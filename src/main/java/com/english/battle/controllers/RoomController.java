@@ -37,7 +37,10 @@ public class RoomController {
         ApiResponse<Object> response = roomService.UpdateStatusOfRoom(idRoom);
         return ResponseEntity.status(response.getCode()).body(response);
     }
-
-
+    @GetMapping("/history/{idUser}")
+    public ResponseEntity<Object> getHistory(@PathVariable Long idUser){
+        ApiResponse<Object> response = roomService.GetListRoomUser(idUser);
+        return ResponseEntity.status(response.getCode()).body(response);
+    }
 }
 //Create room -> join room -> submit list question
