@@ -51,7 +51,6 @@ public class UserService {
 
     public User updateUser(UserCreateRequest request, Long userId){
         User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found"));
-
         user.setUsername(request.getUsername());
         user.setPassword((request.getPassword()));
         user.setAddress(request.getAddress());
@@ -61,10 +60,8 @@ public class UserService {
         user.setStatus(request.getStatus());
         user.setDayOfBirth(request.getDayOfBirth());
         user.setFullName(request.getFullName());
-
         Optional<Roles> role = roleRepository.findById(Long.valueOf(4));
         user.setRole(role.get());
-
         return userRepository.save(user);
 
     }

@@ -32,11 +32,8 @@ public class RoleService {
         Roles role = roleRepository.findById(idRole).orElseThrow(() -> new RuntimeException("Role not found"));
 
         role.setNameRole(request.getNameRole());
-
         return roleRepository.save(role);
-
     }
-
     public void deleteRole(Long idRole){
         roleRepository.deleteById(idRole);
     }
