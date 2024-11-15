@@ -3,14 +3,12 @@ package com.english.battle.services;
 
 import com.english.battle.models.*;
 import com.english.battle.repository.DetailsRoomRepository;
-import com.english.battle.repository.RoomRepository;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
@@ -30,7 +28,7 @@ public class DetailsRoomService {
         }
     }
     public void checkSubmitUser(User user, Room room){
-        List<DetailsRoom> list = detailsRoomRepository.findDetailsRoomByIdRoom(room.getIdRoom());
+        List<DetailsRoom> list = detailsRoomRepository.findDetailsRoomByIdRoom(room);
         boolean isSubmit = list.stream().anyMatch(s-> s.getUserSubmit().equals(user) && s.getIdRoom().equals(room));
         if (!isSubmit){
             DetailsRoom detailsRoom = new DetailsRoom();
