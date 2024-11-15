@@ -14,6 +14,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -135,5 +136,9 @@ public class RoomService {
             logger.error("Error when calculate rank: {}", e.getMessage());
             return new ApiResponse<>(400, false, e.getMessage(), null);
         }
+    }
+    public ApiResponse<Object> listRoomInProgress(){
+        List <Room> list = roomRepository.findAll().stream().filter(s -> s.getStatusRoom().equals("Progress")).toList();
+        return new ApiResponse<>(200, true, "success", list);
     }
 }

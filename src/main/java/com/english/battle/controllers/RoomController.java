@@ -42,5 +42,10 @@ public class RoomController {
         ApiResponse<Object> response = roomService.GetListRoomUser(idUser);
         return ResponseEntity.status(response.getCode()).body(response);
     }
+    @GetMapping("/room-progress")
+    public ResponseEntity<Object> getRoomProgress(){
+        ApiResponse<Object> response = roomService.listRoomInProgress();
+        return ResponseEntity.status(response.getCode()).body(response);
+    }
 }
 //Create room -> join room -> submit list question
