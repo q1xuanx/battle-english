@@ -1,6 +1,8 @@
 package com.english.battle.services;
 
+import com.english.battle.compare.UserComparator;
 import com.english.battle.dto.request.UserCreateRequest;
+import com.english.battle.dto.response.ApiResponse;
 import com.english.battle.models.Roles;
 import com.english.battle.models.User;
 import com.english.battle.repository.RoleRepository;
@@ -9,9 +11,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.stereotype.Service;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class UserService {
@@ -39,7 +40,11 @@ public class UserService {
 
         return userRepository.save(user);
     }
-
+    public ApiResponse<Object> getLeaderBoard(){
+        List<User> getUser = userRepository.findAll();
+        getUser.sort(new UserComparator());
+        return new ApiResponse<>(200,true,"get list success", getUser);
+    }
     public List<User> getAllUsers(){
         List<User> users = userRepository.findAll();
         return users;
@@ -63,6 +68,5 @@ public class UserService {
         Optional<Roles> role = roleRepository.findById(Long.valueOf(4));
         user.setRole(role.get());
         return userRepository.save(user);
-
     }
 }

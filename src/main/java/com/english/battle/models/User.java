@@ -3,8 +3,10 @@ package com.english.battle.models;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.ColumnDefault;
 
 @Entity
 @Data
@@ -24,12 +26,10 @@ public class User {
     private String Gender;
     private boolean isHide;
     private String status;
-
+    @ColumnDefault("0")
+    private int ratings;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "role_id", nullable = true)
     @JsonIgnore
     private Roles role;
-
-
-
 }
