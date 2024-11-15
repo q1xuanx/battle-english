@@ -33,7 +33,10 @@ public class UserController {
         response.setMessage("Get all users successfully");
         return response;
     }
-
+    @GetMapping("/board")
+    ApiResponse<Object> getAllUsersByBoard() {
+        return userService.getLeaderBoard();
+    }
     @GetMapping("/{userId}")
     ApiResponse<User> getUser(@PathVariable("userId") Long userId) {
         ApiResponse<User> response = new ApiResponse<>();

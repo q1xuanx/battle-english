@@ -95,6 +95,10 @@ public class RoomService {
             return room.map(r -> {
                 r.setStatusRoom("Complete");
                 roomRepository.save(r);
+                List<User> currentUser = r.getCurrentUser();
+                for (User s : currentUser){
+                    detailsRoomService.checkSubmitUser(s,r);
+                }
                 return new ApiResponse<Object>(200, true, "Room updated", r);
             }).orElseGet(() -> new ApiResponse<>(404, false, "Not found room with id " + idRoom, null));
         }catch (Exception e){
@@ -105,6 +109,15 @@ public class RoomService {
     public ApiResponse<Object> GetListRoomUser(Long idUser){
         List<Room> list = roomRepository.findAll().stream().filter(s -> s.getCurrentUser().stream().anyMatch(ss -> ss.getId().equals(idUser))).toList();
         return new ApiResponse<>(200, true, "list room of users", list);
+    }
+    public void CalculateRankOfUser(){
+        LocalDateTime now = LocalDateTime.now();
+        List<Room> list = roomRepository.findAll().stream().filter(s->s.getEndTime().isAfter(now)).toList();
+        for (Room room : list) {
+            List<DetailsRoom> detailsRooms = detailsRoomService.GetAllRankOfUser(room);
+            int point = 5;
+            detailsRooms.getFirst().getUserSubmit().setRatings(detailsRooms.getFirst().getUserSubmit().getRatings() + point);
+        }
     }
     public ApiResponse<Object> CalculateRank (String idRoom){
         try {
