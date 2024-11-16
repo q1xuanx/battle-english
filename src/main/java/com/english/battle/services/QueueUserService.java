@@ -5,7 +5,6 @@ import com.english.battle.dto.response.ApiResponse;
 import com.english.battle.models.QueueUser;
 import com.english.battle.models.User;
 import com.english.battle.repository.QueueUserRepository;
-import com.english.battle.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
