@@ -2,13 +2,12 @@ package com.english.battle.services;
 
 import com.english.battle.dto.request.UserCreateRoomRequest;
 import com.english.battle.dto.response.ApiResponse;
-import com.english.battle.models.QueueUser;
 import com.english.battle.models.User;
-import com.english.battle.repository.QueueUserRepository;
-import com.english.battle.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.redis.core.ListOperations;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -16,30 +15,25 @@ import java.util.*;
 @Service
 @RequiredArgsConstructor
 public class QueueUserService {
-    private final QueueUserRepository queueUserRepository;
     private final UserService userService;
     private final RoomService roomService;
+    private final RedisTemplate<String, Long> redisTemplate;
     private final Logger log = LoggerFactory.getLogger(QueueUserService.class);
-    //Search user if queue.length > 1 then create new Room with current user and user in queue.
+    private final String key = "QueueUser";
     public ApiResponse<Object> searchUser(Long idUser, String typeOfRoom) {
         try {
             User user = userService.getUserById(idUser);
             if (user == null) {
                 return new ApiResponse<>(404, false, "Not found user", null);
             }
-            List<QueueUser> queue = queueUserRepository.findAll();
-            if (queue.isEmpty()) {
-                QueueUser queueUser = new QueueUser();
-                queueUser.setUser(user);
-                queueUserRepository.save(queueUser);
+            ListOperations<String, Long> queue = redisTemplate.opsForList();
+            Long queueSize = queue.size(key);
+            if (queueSize == null || queueSize == 0) {
+                queue.rightPush(key, idUser);
                 return new ApiResponse<>(200, true, "User is in queue", user);
             }
-            QueueUser userInQueue = queueUserRepository.findAll().getFirst();
-            if (userInQueue == null) {
-                return new ApiResponse<>(404, false, "Not found user", null);
-            }
-            List<UserCreateRoomRequest> listUser = new ArrayList<>(createListToMakeRoom(userInQueue.getUser().getId(),idUser));
-            queueUserRepository.delete(userInQueue);
+            Long userInQueue = queue.leftPop(key);
+            List<UserCreateRoomRequest> listUser = new ArrayList<>(createListToMakeRoom(userInQueue, idUser));
             return roomService.CreateNewRoom(listUser, typeOfRoom);
         }catch (Exception e){
             log.error("Error when add new user: || error message {}", e.getMessage());
@@ -48,10 +42,10 @@ public class QueueUserService {
     }
     public ApiResponse<Object> leaveQueue(Long idUser) {
         try{
-            List<QueueUser> userInQueue = queueUserRepository.findAll();
-            Optional<QueueUser> user = userInQueue.stream().filter(s -> Objects.equals(s.getUser().getId(), idUser)).findFirst();
-            if (user.isPresent()){
-                queueUserRepository.delete(user.get());
+            ListOperations<String, Long> ops = redisTemplate.opsForList();
+            List<Long> queue = ops.range(key, 0, -1);
+            if (queue != null && queue.contains(idUser)) {
+                ops.remove(key,1,idUser);
                 return new ApiResponse<>(200, true, "User left in queue", null);
             }
             return new ApiResponse<>(404, false, "Not found user", null);
