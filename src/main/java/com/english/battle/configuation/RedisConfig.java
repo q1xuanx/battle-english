@@ -10,11 +10,15 @@ import org.springframework.data.redis.core.RedisTemplate;
 public class RedisConfig {
     @Bean
     JedisConnectionFactory jedisConnectionFactory() {
-        return new JedisConnectionFactory();
+        JedisConnectionFactory jedis = new JedisConnectionFactory();
+        jedis.setHostName("localhost");
+        jedis.setPort(6379);
+        return jedis;
     }
     @Bean
     public RedisTemplate<String, Long> redisTemplate() {
         RedisTemplate<String,Long> template = new RedisTemplate<>();
+        template.setEnableTransactionSupport(true);
         template.setConnectionFactory(jedisConnectionFactory());
         return template;
     }

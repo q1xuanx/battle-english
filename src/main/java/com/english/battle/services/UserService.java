@@ -12,18 +12,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Service
 public class UserService {
     @Autowired
     private UserRepository userRepository;
-
     @Autowired
     private RoleRepository roleRepository;
-
     public User addUser(UserCreateRequest request){
-
         User user = new User();
         user.setUsername(request.getUsername());
         user.setPassword((request.getPassword()));
@@ -34,10 +30,8 @@ public class UserService {
         user.setStatus(request.getStatus());
         user.setDayOfBirth(request.getDayOfBirth());
         user.setFullName(request.getFullName());
-
         Optional<Roles> role = roleRepository.findById(Long.valueOf(1));
         user.setRole(role.get());
-
         return userRepository.save(user);
     }
     public ApiResponse<Object> getLeaderBoard(){
@@ -49,11 +43,9 @@ public class UserService {
         List<User> users = userRepository.findAll();
         return users;
     }
-
     public User getUserById(Long userId){
         return userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found"));
     }
-
     public User updateUser(UserCreateRequest request, Long userId){
         User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found"));
         user.setUsername(request.getUsername());

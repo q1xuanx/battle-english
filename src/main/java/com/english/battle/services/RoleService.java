@@ -15,28 +15,20 @@ import java.util.Optional;
 public class RoleService {
     @Autowired
     private RoleRepository roleRepository;
-
     public Roles addRole(RoleRequest request){
         Roles role = new Roles();
         role.setNameRole(request.getNameRole());
-
         return roleRepository.save(role);
     }
-
     public List<Roles> getAll(){
-        List<Roles> roles = roleRepository.findAll();
-        return roles;
+        return roleRepository.findAll();
     }
-
     public Roles updateRole(RoleRequest request, Long idRole){
         Roles role = roleRepository.findById(idRole).orElseThrow(() -> new RuntimeException("Role not found"));
-
         role.setNameRole(request.getNameRole());
         return roleRepository.save(role);
     }
     public void deleteRole(Long idRole){
         roleRepository.deleteById(idRole);
     }
-
-
 }
